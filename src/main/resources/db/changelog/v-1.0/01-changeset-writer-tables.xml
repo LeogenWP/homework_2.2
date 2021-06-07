@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="Gena" id="1">
+        <createTable tableName="writers">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Gena" id="2">
+        <createTable tableName="posts">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="content" type="VARCHAR(255)"/>
+            <column name="created" type="VARCHAR(255)"/>
+            <column name="updated" type="VARCHAR(255)"/>
+            <column name="post_status_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="Gena" id="3">
+        <createTable tableName="writers_posts">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="writer_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_writer" references="writers(id)"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_post" references="posts(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet author="Gena" id="5">
+        <createTable tableName="posts_labels">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="post_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_posts_label_postid" references="posts(id)"/>
+            </column>
+
+            <column name="label_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_posts_label_labelid" references="labels(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="Gena" id="6">
+        <createTable tableName="labels">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
