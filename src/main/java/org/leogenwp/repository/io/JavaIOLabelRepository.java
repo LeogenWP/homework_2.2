@@ -33,11 +33,16 @@ public class JavaIOLabelRepository  implements LabelRepository {
                 url,username,password)){
             Statement statement = conn.createStatement();
             statement.executeUpdate("INSERT INTO labels (description) " + "VALUES ('" + label.getName() + "')");
-            ResultSet rs = statement.executeQuery("SELECT max(id) FROM task WHERE description like '" + label.getName() + "'");
-            while ( rs.next() ) {
-                label.setId(rs.getInt("max(id)"));
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    label.setId(generatedKeys.getInt("id"));
+                }
+                else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
             }
-        }catch(Exception e){ System.out.println(e);}
+
+        } catch(Exception e){ System.out.println(e);}
         return label;
     }
 
