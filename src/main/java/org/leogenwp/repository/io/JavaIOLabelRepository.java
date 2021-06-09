@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaIOLabelRepository  implements LabelRepository {
-    private String url = "jdbc:mysql://localhost:3306/writer";
-    private String username = "root";
-    private String password = "admin";
+    private final String url = "jdbc:mysql://localhost:3306/writer";
+    private final String username = "root";
+    private final String password = "admin";
 
     @Override
     public List<Label> getAll() {
@@ -32,7 +32,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
         try(Connection conn=DriverManager.getConnection(
                 url,username,password)){
             Statement statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO labels (description) " + "VALUES ('" + label.getName() + "')");
+            statement.executeUpdate("INSERT INTO writers (description) " + "VALUES ('" + label.getName() + "')");
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     label.setId(generatedKeys.getInt("id"));

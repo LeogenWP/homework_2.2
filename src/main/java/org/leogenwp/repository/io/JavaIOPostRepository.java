@@ -12,10 +12,10 @@ import java.util.Date;
 import java.util.List;
 
 public class JavaIOPostRepository implements PostRepository {
-    private String url = "jdbc:mysql://localhost:3306/writer";
-    private String username = "root";
-    private String password = "admin";
-    private LabelRepository labelRepository = new JavaIOLabelRepository();
+    private final String url = "jdbc:mysql://localhost:3306/writer";
+    private final String username = "root";
+    private final String password = "admin";
+    private final LabelRepository labelRepository = new JavaIOLabelRepository();
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
@@ -132,7 +132,7 @@ public class JavaIOPostRepository implements PostRepository {
         }
         for(Label label : post.getLabels()) {
             try (Connection conn = DriverManager.getConnection(url);
-                 Statement statement = conn.createStatement();) {
+                 Statement statement = conn.createStatement()) {
                 statement.executeUpdate("INSERT INTO posts_labels (post_id,label_id) " + "VALUES (" + post.getId() + ", " + label.getId() + ")");
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
