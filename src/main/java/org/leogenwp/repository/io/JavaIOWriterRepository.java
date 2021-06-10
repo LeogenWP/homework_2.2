@@ -6,21 +6,20 @@ import org.leogenwp.model.PostStatus;
 import org.leogenwp.model.Writer;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.WriterRepository;
+import org.leogenwp.utils.ConnectDB;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class JavaIOWriterRepository implements WriterRepository {
-    private final String url = "jdbc:mysql://localhost:3306/writer";
-    private final String username = "root";
-    private final String password = "admin";
     private final LabelRepository labelRepository = new JavaIOLabelRepository();
 
     @Override
     public List<Writer> getAll() {
         List<Writer> writers = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("select * from writers")) {
             while ( rs.next() ) {
@@ -37,8 +36,7 @@ public class JavaIOWriterRepository implements WriterRepository {
 
     @Override
     public Writer save(Writer writer) {
-        try(Connection conn=DriverManager.getConnection(
-                url,username,password)){
+        try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
             String values = "VALUES ('" + writer.getFirstName() + "', '"+ writer.getLastName() + "')";
             statement.executeUpdate("INSERT INTO writers (first_name,last_name) " + values);
@@ -58,7 +56,7 @@ public class JavaIOWriterRepository implements WriterRepository {
     @Override
     public Writer getById(Integer writerId) {
         Writer writer = new Writer();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("select * from writers where id = " + writerId)) {
             while ( rs.next() ) {
@@ -75,14 +73,14 @@ public class JavaIOWriterRepository implements WriterRepository {
 
     @Override
     public Writer update(Writer writer) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "UPDATE writers SET first_name = " + writer.getFirstName() +", last_name = "+writer.getLastName()+" WHERE id = " + writer.getId();
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "UPDATE posts SET writer_id = " + writer.getId() +"  WHERE id = ? ";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
@@ -101,14 +99,14 @@ public class JavaIOWriterRepository implements WriterRepository {
 
     @Override
     public void deleteById(Integer id) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "delete from writers where id = " + id;
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "delete writer_id from posts where writer_id = " + id;
             statement.executeUpdate(sql);
@@ -120,7 +118,7 @@ public class JavaIOWriterRepository implements WriterRepository {
     private List<Post> getWriterPosts(Integer writerId) {
         List<Post> posts = new ArrayList<>();
 
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
         ) {
             String sql = "SELECT id,content,created,updated,post_status " +
@@ -153,7 +151,7 @@ public class JavaIOWriterRepository implements WriterRepository {
 
     private List<Label> getPostLabels(Integer postId) {
         List<Label> labels = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("SELECT label_id FROM post_labels WHERE post_id = " + postId )) {
             while ( rs.next() ) {

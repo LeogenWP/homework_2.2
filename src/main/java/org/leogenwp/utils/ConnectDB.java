@@ -7,17 +7,18 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectDB {
-    private  String url = "jdbc:mysql://localhost:3306/writer";
+    private  String url = "jdbc:mysql://localhost:3306/writer?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
     private  String username = "root";
     private  String password = "admin";
     private static ConnectDB instance;
     private Connection connection;
 
+    //jdbc:mysql://localhost:3306/writer
     private ConnectDB()
     {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/writer","root","admin");
+            this.connection = DriverManager.getConnection(url,"root","admin");
         }
 
         catch(SQLException e)

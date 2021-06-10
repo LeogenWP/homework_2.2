@@ -10,16 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaIOLabelRepository  implements LabelRepository {
-    private final String url = "jdbc:mysql://localhost:3306/writer";
-    private final String username = "root";
-    private final String password = "admin";
 
     @Override
     public List<Label> getAll() {
         List<Label> labels = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("select id, description from task")) {
+            ResultSet rs = statement.executeQuery("select id, description from labels")) {
             while ( rs.next() ) {
                 labels.add(new Label(rs.getInt("id"),rs.getString("description")));
             }
@@ -33,14 +30,12 @@ public class JavaIOLabelRepository  implements LabelRepository {
     public Label save(Label label) {
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO writers (description) " + "VALUES ('" + label.getName() + "')");
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    label.setId(generatedKeys.getInt("id"));
-                }
-                else {
-                    throw new SQLException("Creating user failed, no ID obtained.");
-                }
+            statement.executeUpdate("INSERT INTO labels (description) " + "VALUES ('" + label.getName() + "')",Statement.RETURN_GENERATED_KEYS);
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                label.setId(rs.getInt(1));
+            } else {
+                throw new SQLException("Creating user failed, no ID obtained.");
             }
 
         } catch(Exception e){ System.out.println(e);}
@@ -53,7 +48,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
         String sql = "select   id, description " +
                 " from labels " +
                 " where id = " + id ;
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(sql)) {
             while ( rs.next() ) {
@@ -68,7 +63,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
 
     @Override
     public Label update(Label label) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "UPDATE labels SET description = " + label.getName() +" WHERE id = " + label.getId();
             statement.executeUpdate(sql);
@@ -80,7 +75,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
 
     @Override
     public void deleteById(Integer id) {
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "delete from labels where id = " + id;
             statement.executeUpdate(sql);

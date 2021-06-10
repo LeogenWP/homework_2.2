@@ -5,6 +5,8 @@ import org.leogenwp.model.Post;
 import org.leogenwp.model.PostStatus;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.PostRepository;
+import org.leogenwp.utils.ConnectDB;
+
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,16 +14,13 @@ import java.util.Date;
 import java.util.List;
 
 public class JavaIOPostRepository implements PostRepository {
-    private final String url = "jdbc:mysql://localhost:3306/writer";
-    private final String username = "root";
-    private final String password = "admin";
     private final LabelRepository labelRepository = new JavaIOLabelRepository();
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
             ) {
             String sql = "SELECT id,content,created,updated,post_status " +
@@ -59,8 +58,7 @@ public class JavaIOPostRepository implements PostRepository {
         post.setUpdated(strDate);
         post.setPostStatus(PostStatus.ACTIVE);
 
-        try(Connection conn=DriverManager.getConnection(
-                url,username,password)){
+        try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
             String values = "VALUES ('" + post.getContent() + "', '"+ post.getCreated() + "','"+post.getUpdated()+"','"+post.getPostStatus()+"')";
             statement.executeUpdate("INSERT INTO posts (content,created,updated,post_status) " + values);
@@ -80,7 +78,7 @@ public class JavaIOPostRepository implements PostRepository {
     @Override
     public Post getById(Integer postId) {
         Post post = new Post();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
         ) {
             String sql = "SELECT id,content,created,updated,post_status " +
@@ -114,7 +112,7 @@ public class JavaIOPostRepository implements PostRepository {
         String strDate = sdfDate.format(now);
         post.setUpdated(strDate);
 
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             String sql = "UPDATE posts SET content = '"+post.getContent()+
                     "' ,created = '"+post.getCreated() +
@@ -124,14 +122,14 @@ public class JavaIOPostRepository implements PostRepository {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             statement.executeUpdate("delete from posts_labels where id = " + post.getId());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         for(Label label : post.getLabels()) {
-            try (Connection conn = DriverManager.getConnection(url);
+            try (Connection conn= ConnectDB.getInstance().getConnection();
                  Statement statement = conn.createStatement()) {
                 statement.executeUpdate("INSERT INTO posts_labels (post_id,label_id) " + "VALUES (" + post.getId() + ", " + label.getId() + ")");
             } catch (SQLException throwables) {
@@ -144,14 +142,14 @@ public class JavaIOPostRepository implements PostRepository {
 
     @Override
     public void deleteById (Integer id){
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             statement.executeUpdate("delete from posts_labels where id = " + id);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
             statement.executeUpdate("delete from posts where id = " + id);
         } catch (SQLException throwables) {
@@ -161,7 +159,7 @@ public class JavaIOPostRepository implements PostRepository {
 
     private List<Label> getPostLabels(Integer postId) {
         List<Label> labels = new ArrayList<>();
-        try(Connection conn = DriverManager.getConnection(url);
+        try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("SELECT label_id FROM post_labels WHERE post_id = " + postId )) {
             while ( rs.next() ) {
