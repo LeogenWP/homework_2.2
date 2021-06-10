@@ -61,10 +61,10 @@ public class JavaIOPostRepository implements PostRepository {
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
             String values = "VALUES ('" + post.getContent() + "', '"+ post.getCreated() + "','"+post.getUpdated()+"','"+post.getPostStatus()+"')";
-            statement.executeUpdate("INSERT INTO posts (content,created,updated,post_status) " + values);
+            statement.executeUpdate("INSERT INTO posts (content,created,updated,post_status) " + values,Statement.RETURN_GENERATED_KEYS);
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    post.setId(generatedKeys.getInt("id"));
+                    post.setId(generatedKeys.getInt(1));
                 }
                 else {
                     throw new SQLException("Creating user failed, no ID obtained.");

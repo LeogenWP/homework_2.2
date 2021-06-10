@@ -39,10 +39,10 @@ public class JavaIOWriterRepository implements WriterRepository {
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
             String values = "VALUES ('" + writer.getFirstName() + "', '"+ writer.getLastName() + "')";
-            statement.executeUpdate("INSERT INTO writers (first_name,last_name) " + values);
+            statement.executeUpdate("INSERT INTO writers (first_name,last_name) " + values,Statement.RETURN_GENERATED_KEYS);
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    writer.setId(generatedKeys.getInt("id"));
+                    writer.setId(generatedKeys.getInt(1));
                 }
                 else {
                     throw new SQLException("Creating user failed, no ID obtained.");
