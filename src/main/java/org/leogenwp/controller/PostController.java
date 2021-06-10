@@ -35,7 +35,7 @@ public class PostController {
         for (Post post : postRepository.getAll()) {
             System.out.println(post.getId() + ";" + post.getContent() +
                     ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
-                    postRepository.getLabelsID(post) + ";" + post.getPostStatus() );
+                    post.getLabels().toString() + ";" + post.getPostStatus() );
         }
         return postRepository.getAll();
     }
@@ -50,7 +50,7 @@ public class PostController {
             Post post = postRepository.getById(id);
             System.out.println(post.getId() + ";" + post.getContent() +
                     ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
-                    postRepository.getLabelsID(post) + ";" + post.getPostStatus() );
+                    post.getLabels().toString() + ";" + post.getPostStatus() );
         } catch (Exception e) {
             e.printStackTrace();
         }

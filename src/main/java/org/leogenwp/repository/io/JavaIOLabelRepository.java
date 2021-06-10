@@ -2,6 +2,8 @@ package org.leogenwp.repository.io;
 
 import org.leogenwp.model.Label;
 import org.leogenwp.repository.LabelRepository;
+import org.leogenwp.utils.ConnectDB;
+
 import java.sql.Connection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -29,8 +31,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
 
     @Override
     public Label save(Label label) {
-        try(Connection conn=DriverManager.getConnection(
-                url,username,password)){
+        try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
             statement.executeUpdate("INSERT INTO writers (description) " + "VALUES ('" + label.getName() + "')");
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {

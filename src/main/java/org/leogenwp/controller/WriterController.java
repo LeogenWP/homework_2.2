@@ -31,7 +31,7 @@ public class WriterController {
         for (Writer writer : writerRepository.getAll()) {
             System.out.println(writer.getId() + ";" + writer.getFirstName() +
                     ";" + writer.getLastName() + ";" +
-                    writerRepository.getPostsID(writer));
+                    writer.getPosts().toString());
         }
         return writerRepository.getAll();
     }
@@ -46,7 +46,7 @@ public class WriterController {
             Writer writer = writerRepository.getById(id);
             System.out.println(writer.getId() + ";" + writer.getFirstName() +
                     ";" + writer.getLastName() + ";" +
-                    writerRepository.getPostsID(writer));
+                   writer.getPosts().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
