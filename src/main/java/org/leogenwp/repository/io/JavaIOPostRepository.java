@@ -60,8 +60,9 @@ public class JavaIOPostRepository implements PostRepository {
 
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
-            String values = "VALUES ('" + post.getContent() + "', '"+ post.getCreated() + "','"+post.getUpdated()+"','"+post.getPostStatus()+"')";
-            statement.executeUpdate("INSERT INTO posts (content,created,updated,post_status) " + values,Statement.RETURN_GENERATED_KEYS);
+            String sql = String.format("INSERT INTO posts (content,created,updated,post_status) VALUES('%s','%s','%s','%s')"
+            ,post.getContent(),post.getCreated(),post.getUpdated(),post.getPostStatus());
+            statement.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     post.setId(generatedKeys.getInt(1));
@@ -81,8 +82,8 @@ public class JavaIOPostRepository implements PostRepository {
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
         ) {
-            String sql = "SELECT id,content,created,updated,post_status " +
-                    "FROM posts where id = " + postId;
+            String sql =String.format("SELECT id,content,created,updated,post_status " +
+                    "FROM posts where id = %d",postId);
             ResultSet rs = statement.executeQuery(sql);
             while ( rs.next() ) {
                 post.setId(rs.getInt("id"));
@@ -114,10 +115,8 @@ public class JavaIOPostRepository implements PostRepository {
 
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql = "UPDATE posts SET content = '"+post.getContent()+
-                    "' ,created = '"+post.getCreated() +
-                    "',updated = "+post.getUpdated() +
-                    ",post_status = '" + post.getPostStatus() + "' WHERE id = " + post.getId();
+            String sql =String.format("UPDATE posts SET content ='%s',updated = '%s' ,post_status = '%s' where is = %d"
+                    ,post.getContent(),post.getUpdated(),post.getPostStatus(),post.getId());
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -144,14 +143,16 @@ public class JavaIOPostRepository implements PostRepository {
     public void deleteById (Integer id){
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            statement.executeUpdate("delete from posts_labels where id = " + id);
+            String sql = String.format("delete from posts_labels where id = %d", id);
+            statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            statement.executeUpdate("delete from posts where id = " + id);
+            String sql = String.format("delete from posts where id = %d",id);
+            statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -160,8 +161,9 @@ public class JavaIOPostRepository implements PostRepository {
     private List<Label> getPostLabels(Integer postId) {
         List<Label> labels = new ArrayList<>();
         try(Connection conn= ConnectDB.getInstance().getConnection();
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT label_id FROM post_labels WHERE post_id = " + postId )) {
+            Statement statement = conn.createStatement()) {
+            String sql = String.format("SELECT label_id FROM post_labels WHERE post_id = %d",postId);
+            ResultSet rs = statement.executeQuery(sql );
             while ( rs.next() ) {
                 labels.add(labelRepository.getById(rs.getInt("label_id")));
             }

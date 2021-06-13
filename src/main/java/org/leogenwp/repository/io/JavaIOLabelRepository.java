@@ -3,7 +3,6 @@ package org.leogenwp.repository.io;
 import org.leogenwp.model.Label;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.utils.ConnectDB;
-
 import java.sql.Connection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,7 +29,8 @@ public class JavaIOLabelRepository  implements LabelRepository {
     public Label save(Label label) {
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO labels (description) " + "VALUES ('" + label.getName() + "')",Statement.RETURN_GENERATED_KEYS);
+            String sql = String.format("INSERT INTO labels (description) VALUES ('%s')",label.getName());
+            statement.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next()) {
                 label.setId(rs.getInt(1));
@@ -45,9 +45,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
     @Override
     public Label getById(Integer id) {
        Label label = new Label();
-        String sql = "select   id, description " +
-                " from labels " +
-                " where id = " + id ;
+        String sql =String.format("select id, description from labels where id = %d",id);
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(sql)) {
@@ -65,7 +63,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
     public Label update(Label label) {
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql = "UPDATE labels SET description = " + label.getName() +" WHERE id = " + label.getId();
+            String sql = String.format("UPDATE labels SET description = '%s' where id = %d",label.getName(),label.getId());
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -77,7 +75,7 @@ public class JavaIOLabelRepository  implements LabelRepository {
     public void deleteById(Integer id) {
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql = "delete from labels where id = " + id;
+            String sql = String.format("delete from labels where id = %d",id);
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
