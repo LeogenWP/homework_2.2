@@ -26,7 +26,10 @@ public class JavaIOWriterRepository implements WriterRepository {
             ResultSet rs = statement.executeQuery("select * from writers")) {
             while ( rs.next() ) {
                 Writer writer = new Writer(rs.getInt("id"),rs.getString("first_name"),rs.getString("last_name"));
-                writer.setPosts(getWriterPosts(rs.getInt("id")));
+                writers.add(writer);
+            }
+            for (Writer writer : writers) {
+                writer.setPosts(getWriterPosts(writer.getId()));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -63,8 +66,8 @@ public class JavaIOWriterRepository implements WriterRepository {
             ResultSet rs = statement.executeQuery(sql);
             while ( rs.next() ) {
                  writer = new Writer(rs.getInt("id"),rs.getString("first_name"),rs.getString("last_name"));
-                writer.setPosts(getWriterPosts(rs.getInt("id")));
             }
+            writer.setPosts(getWriterPosts(writer.getId()));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -137,9 +140,12 @@ public class JavaIOWriterRepository implements WriterRepository {
                     post.setPostStatus(PostStatus.DELETED);
                 }
 
-                post.setLabels(getPostLabels(rs.getInt("id")));
                 posts.add(post);
             }
+            for(Post post : posts) {
+                post.setLabels(getPostLabels(post.getId()));
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -151,7 +157,7 @@ public class JavaIOWriterRepository implements WriterRepository {
         List<Label> labels = new ArrayList<>();
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-                 String sql = String.format("SELECT label_id FROM post_labels WHERE post_id = %d",postId );
+                 String sql = String.format("SELECT label_id FROM posts_labels WHERE post_id = %d",postId );
                  ResultSet rs = statement.executeQuery(sql);
             while ( rs.next() ) {
                 labels.add(labelRepository.getById(rs.getInt("label_id")));

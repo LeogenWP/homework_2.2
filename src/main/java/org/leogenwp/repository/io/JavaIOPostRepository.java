@@ -40,9 +40,10 @@ public class JavaIOPostRepository implements PostRepository {
                 } else if (rs.getString("post_status").equals("DELETED")) {
                     post.setPostStatus(PostStatus.DELETED);
                 }
-
-                post.setLabels(getPostLabels(rs.getInt("id")));
                 posts.add(post);
+            }
+            for (Post post : posts) {
+                post.setLabels(getPostLabels(post.getId()));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -98,8 +99,8 @@ public class JavaIOPostRepository implements PostRepository {
                     post.setPostStatus(PostStatus.DELETED);
                 }
 
-                post.setLabels(getPostLabels(rs.getInt("id")));
             }
+            post.setLabels(getPostLabels(post.getId()));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -162,7 +163,7 @@ public class JavaIOPostRepository implements PostRepository {
         List<Label> labels = new ArrayList<>();
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql = String.format("SELECT label_id FROM post_labels WHERE post_id = %d",postId);
+            String sql = String.format("SELECT label_id FROM posts_labels WHERE post_id = %d",postId);
             ResultSet rs = statement.executeQuery(sql );
             while ( rs.next() ) {
                 labels.add(labelRepository.getById(rs.getInt("label_id")));

@@ -9,6 +9,7 @@ import org.leogenwp.repository.io.JavaIOPostRepository;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,12 +33,20 @@ public class PostController {
     }
 
     public List<Post> getAll() {
-        for (Post post : postRepository.getAll()) {
-            System.out.println(post.getId() + ";" + post.getContent() +
-                    ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
-                    post.getLabels().toString() + ";" + post.getPostStatus() );
+        List<Post> posts = new ArrayList<>();
+        try {
+            posts = postRepository.getAll();
+            for (Post post : posts) {
+                System.out.println(post.getId() + ";" + post.getContent() +
+                        ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
+                        post.getLabels().toString() + ";" + post.getPostStatus());
+                //System.out.println(post.toString());
+            }
+            //return postRepository.getAll();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return postRepository.getAll();
+        return posts;
     }
 
     public void deleteById( Integer id) {
