@@ -5,7 +5,7 @@ import org.leogenwp.model.Post;
 import org.leogenwp.model.PostStatus;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.PostRepository;
-import org.leogenwp.utils.ConnectDB;
+import org.leogenwp.CollectionUtils.ConnectDB;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -17,16 +17,19 @@ public class JavaIOPostRepository implements PostRepository {
     private final LabelRepository labelRepository = new JavaIOLabelRepository();
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    private final String getAll = "SELECT id,content,created,updated,post_status FROM posts";
+    private final String save = "INSERT INTO posts (content,created,updated,post_status) VALUES('%s','%s','%s','%s')";
+    private final String getById = "SELECT id,content,created,updated,post_status FROM posts where id = %d";
+    private final String update = "UPDATE posts SET content ='%s',updated = '%s' ,post_status = '%s' where is = %d";
+    private final String deleteById = "delete from labels where id = %d";
+
     @Override
     public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
             ) {
-            String sql = "SELECT id,content,created,updated,post_status " +
-                    "FROM posts";
-            ResultSet rs = statement.executeQuery(sql);
-
+            ResultSet rs = statement.executeQuery(getAll);
             while ( rs.next() ) {
                 Post post = new Post();
                 post.setId(rs.getInt("id"));
@@ -61,8 +64,7 @@ public class JavaIOPostRepository implements PostRepository {
 
         try(Connection conn= ConnectDB.getInstance().getConnection()){
             Statement statement = conn.createStatement();
-            String sql = String.format("INSERT INTO posts (content,created,updated,post_status) VALUES('%s','%s','%s','%s')"
-            ,post.getContent(),post.getCreated(),post.getUpdated(),post.getPostStatus());
+            String sql = String.format(save,post.getContent(),post.getCreated(),post.getUpdated(),post.getPostStatus());
             statement.executeUpdate(sql,Statement.RETURN_GENERATED_KEYS);
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -83,8 +85,7 @@ public class JavaIOPostRepository implements PostRepository {
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()
         ) {
-            String sql =String.format("SELECT id,content,created,updated,post_status " +
-                    "FROM posts where id = %d",postId);
+            String sql =String.format(getById,postId);
             ResultSet rs = statement.executeQuery(sql);
             while ( rs.next() ) {
                 post.setId(rs.getInt("id"));
@@ -116,8 +117,7 @@ public class JavaIOPostRepository implements PostRepository {
 
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql =String.format("UPDATE posts SET content ='%s',updated = '%s' ,post_status = '%s' where is = %d"
-                    ,post.getContent(),post.getUpdated(),post.getPostStatus(),post.getId());
+            String sql =String.format(update,post.getContent(),post.getUpdated(),post.getPostStatus(),post.getId());
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();

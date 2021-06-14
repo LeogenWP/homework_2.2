@@ -1,6 +1,4 @@
-package org.leogenwp.utils;
-
-import liquibase.database.DatabaseConnection;
+package org.leogenwp.CollectionUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -7,7 +7,7 @@ import org.leogenwp.model.Writer;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.PostRepository;
 import org.leogenwp.repository.WriterRepository;
-import org.leogenwp.utils.ConnectDB;
+import org.leogenwp.CollectionUtils.ConnectDB;
 
 import java.sql.*;
 import java.util.ArrayList;
