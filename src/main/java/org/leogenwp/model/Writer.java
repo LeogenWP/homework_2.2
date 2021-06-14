@@ -52,6 +52,7 @@ public class Writer {
     }
 
     public Writer() {
+        this.posts = new ArrayList<>();
     }
 
     public Writer(Integer id,String firstName, String lastName) {

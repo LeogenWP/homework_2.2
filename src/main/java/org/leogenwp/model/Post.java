@@ -66,7 +66,7 @@ public class Post {
     }
 
     public Post() {
-
+        this.labels = new ArrayList<>();
     }
 
     public Post(String content) {

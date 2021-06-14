@@ -17,10 +17,18 @@ public class JavaIOPostRepository implements PostRepository {
     private final LabelRepository labelRepository = new JavaIOLabelRepository();
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    private final String getAll = "SELECT id,content,created,updated,post_status FROM posts";
+    private final String getAll = "SELECT b.id as post_id ,content,created,updated,post_status,c.id as label_id ,c.description " +
+              "                    FROM posts_labels a right join  posts b" +
+              "                    on a.post_id = b.id" +
+              "                    left join labels c" +
+              "                    on a.label_id = c.id";
     private final String save = "INSERT INTO posts (content,created,updated,post_status) VALUES('%s','%s','%s','%s')";
-    private final String getById = "SELECT id,content,created,updated,post_status FROM posts where id = %d";
-    private final String update = "UPDATE posts SET content ='%s',updated = '%s' ,post_status = '%s' where is = %d";
+    private final String getById = "SELECT b.id as post_id ,content,created,updated,post_status,c.id as label_id ,c.description " +
+            "                    FROM posts_labels a right join  posts b" +
+            "                    on a.post_id = b.id" +
+            "                    left join labels c" +
+            "                    on a.label_id = c.id where b.id = %d";
+    private final String update = "UPDATE posts SET content ='%s',updated = '%s' ,post_status = '%s' where id = %d";
     private final String deleteById = "delete from labels where id = %d";
 
     @Override
@@ -32,7 +40,12 @@ public class JavaIOPostRepository implements PostRepository {
             ResultSet rs = statement.executeQuery(getAll);
             while ( rs.next() ) {
                 Post post = new Post();
-                post.setId(rs.getInt("id"));
+               if (posts.size() > 0) {
+                   if ( (rs.getInt(1)==posts.get(posts.size()-1).getId())) {
+                       post = posts.get(posts.size()-1);
+                   }
+               }
+                post.setId(rs.getInt(1));
                 post.setContent(rs.getString("content"));
                 post.setCreated(rs.getString("created"));
                 post.setUpdated(rs.getString("updated"));
@@ -43,10 +56,15 @@ public class JavaIOPostRepository implements PostRepository {
                 } else if (rs.getString("post_status").equals("DELETED")) {
                     post.setPostStatus(PostStatus.DELETED);
                 }
-                posts.add(post);
-            }
-            for (Post post : posts) {
-                post.setLabels(getPostLabels(post.getId()));
+                if(rs.getInt(6)!=0){
+                    Label label = new Label(rs.getInt(6),rs.getString(7));
+                    post.addLabel(label);
+                }
+                if(posts.size() == 0) {
+                    posts.add(post);
+                } else if ( (post.getId() !=posts.get(posts.size()-1).getId())) {
+                    posts.add(post);
+                }
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -88,7 +106,7 @@ public class JavaIOPostRepository implements PostRepository {
             String sql =String.format(getById,postId);
             ResultSet rs = statement.executeQuery(sql);
             while ( rs.next() ) {
-                post.setId(rs.getInt("id"));
+                post.setId(rs.getInt(1));
                 post.setContent(rs.getString("content"));
                 post.setCreated(rs.getString("created"));
                 post.setUpdated(rs.getString("updated"));
@@ -99,13 +117,14 @@ public class JavaIOPostRepository implements PostRepository {
                 } else if (rs.getString("post_status").equals("DELETED")) {
                     post.setPostStatus(PostStatus.DELETED);
                 }
-
+                if(rs.getInt(6)!=0){
+                    Label label = new Label(rs.getInt(6),rs.getString(7));
+                    post.addLabel(label);
+                }
             }
-            post.setLabels(getPostLabels(post.getId()));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
         return post;
     }
 
@@ -124,7 +143,7 @@ public class JavaIOPostRepository implements PostRepository {
         }
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            statement.executeUpdate("delete from posts_labels where id = " + post.getId());
+            statement.executeUpdate("delete from posts_labels where post_id = " + post.getId());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -136,7 +155,6 @@ public class JavaIOPostRepository implements PostRepository {
                 throwables.printStackTrace();
             }
         }
-
         return post;
     }
 
@@ -144,7 +162,7 @@ public class JavaIOPostRepository implements PostRepository {
     public void deleteById (Integer id){
         try(Connection conn= ConnectDB.getInstance().getConnection();
             Statement statement = conn.createStatement()) {
-            String sql = String.format("delete from posts_labels where id = %d", id);
+            String sql = String.format("delete from posts_labels  where post_id = %d", id);
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -159,18 +177,4 @@ public class JavaIOPostRepository implements PostRepository {
         }
     }
 
-    private List<Label> getPostLabels(Integer postId) {
-        List<Label> labels = new ArrayList<>();
-        try(Connection conn= ConnectDB.getInstance().getConnection();
-            Statement statement = conn.createStatement()) {
-            String sql = String.format("SELECT label_id FROM posts_labels WHERE post_id = %d",postId);
-            ResultSet rs = statement.executeQuery(sql );
-            while ( rs.next() ) {
-                labels.add(labelRepository.getById(rs.getInt("label_id")));
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return labels;
-    }
 }
