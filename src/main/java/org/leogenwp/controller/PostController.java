@@ -15,6 +15,7 @@ import java.util.List;
 
 public class PostController {
     private final PostRepository postRepository;
+    private final JavaIOLabelRepository labelRepository;
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final String updateText = "Next options are available for Post: \n"
             + "type content for updating content\n"
@@ -26,6 +27,7 @@ public class PostController {
 
     public PostController(){
         postRepository = new JavaIOPostRepository();
+        labelRepository = new JavaIOLabelRepository();
     }
 
     public Post save (String postContent) {
@@ -67,7 +69,7 @@ public class PostController {
     }
 
     public Post updateById(BufferedReader reader) {
-        JavaIOLabelRepository labelRepository = new JavaIOLabelRepository();
+
         System.out.println(updateText);
         String string;
         String postId;

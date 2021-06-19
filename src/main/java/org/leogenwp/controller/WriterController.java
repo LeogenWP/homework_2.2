@@ -11,7 +11,7 @@ import java.util.List;
 
 public class WriterController {
     private final WriterRepository writerRepository;
-    private final JavaIOPostRepository postRepository = new JavaIOPostRepository();
+    private final JavaIOPostRepository postRepository;
     private final String updateText = "Next options are available for Writer: \n"
             + "type firsname for updating firs name\n"
             + "type lastname for updating last name\n"
@@ -22,6 +22,7 @@ public class WriterController {
 
     public WriterController() {
         writerRepository = new JavaIOWriterRepository();
+        postRepository = new JavaIOPostRepository();
     }
 
     public Writer save (String firstName, String lastName) {
