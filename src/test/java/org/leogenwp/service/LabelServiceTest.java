@@ -62,7 +62,8 @@ class LabelServiceTest {
     }
 
     @Test
-    void canGetById() {
+    void canGetLabelById() {
+        // given
         Label label = new Label("Table").setId(1);
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
@@ -76,7 +77,8 @@ class LabelServiceTest {
     }
 
     @Test
-    void canUpdateById() {
+    void canUpdateLabel() {
+        // given
         Label label = new Label("Table").setId(1);
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
@@ -85,6 +87,6 @@ class LabelServiceTest {
         when(labelRepository.update(label)).thenReturn(label);
 
         //then
-        assertEquals(label,labelService_underTest.updateById(label));
+        assertEquals(label,labelService_underTest.update(label));
     }
 }

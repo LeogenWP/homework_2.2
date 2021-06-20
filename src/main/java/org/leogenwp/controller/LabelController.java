@@ -38,7 +38,7 @@ public class LabelController {
     public Label updateById(Integer id, String labelName) {
         Label label = labelService.getById(id);
         label.setName(labelName);
-        return labelService.updateById(label);
+        return labelService.update(label);
     }
 
 }

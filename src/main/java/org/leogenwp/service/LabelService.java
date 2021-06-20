@@ -27,7 +27,7 @@ public class LabelService {
         return labelRepository.getById(id);
     }
 
-    public Label updateById(Label label) {
+    public Label update(Label label) {
         return labelRepository.update(label);
     }
 }

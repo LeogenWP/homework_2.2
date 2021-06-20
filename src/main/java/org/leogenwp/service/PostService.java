@@ -43,7 +43,7 @@ public class PostService {
         return  postRepository.getById(id);
     }
 
-    public Post updateById(Post post) {
+    public Post update(Post post) {
         return  postRepository.update(post);
     }
 }

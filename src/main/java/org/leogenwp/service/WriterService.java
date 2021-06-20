@@ -33,7 +33,7 @@ public class WriterService {
         return writerRepository.getById(id);
     }
 
-    public Writer updateById(Writer writer) {
+    public Writer update(Writer writer) {
         return writerRepository.update(writer);
     }
 }

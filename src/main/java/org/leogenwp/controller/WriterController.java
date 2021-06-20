@@ -80,7 +80,7 @@ public class WriterController {
                     System.out.println("write post id that you want to add");
                     writer.addPost(postService.getById(Integer.parseInt(reader.readLine())));
                 } else if (string.equals("save")) {
-                    return writerService.updateById(writer);
+                    return writerService.update(writer);
                 }
             }
         } catch (IOException e) {
