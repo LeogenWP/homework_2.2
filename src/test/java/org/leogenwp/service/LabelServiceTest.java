@@ -6,60 +6,53 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.leogenwp.repository.LabelRepository;
+import org.leogenwp.repository.io.JavaIOLabelRepository;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.leogenwp.model.Label;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 
 class LabelServiceTest {
-
-    @Mock
-    private LabelRepository labelRepository;
-    private static AutoCloseable autoCloseable;
-    private LabelService labelService;
-
-    @BeforeEach
-    void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
-        labelService = new LabelService(labelRepository);
-    }
-
-    @AfterAll
-    static void afterAll() throws  Exception {
-        autoCloseable.close();
-    }
 
     @Test
     void CanSaveLabel() {
         // given
         Label label = new Label("Table");
+        LabelRepository labelRepository = mock(LabelRepository.class);
+        LabelService labelService_underTest = new LabelService(labelRepository);
 
         // when
-        labelService.save(label);
+        when(labelRepository.save(label)).thenReturn(label);
 
-        // then
-        ArgumentCaptor<Label>  labelArgumentCaptor =
-                ArgumentCaptor.forClass(Label.class);
-
-        verify(labelRepository).save(labelArgumentCaptor.capture());
-
-        Label capturedLabel = labelArgumentCaptor.getValue();
-
-        assertEquals(label,capturedLabel);
+        //then
+        assertEquals(label,labelService_underTest.save(label));
     }
 
     @Test
     void canGetAllLabels() {
+        // given
+        List<Label> labels = Arrays.asList(
+                new Label("Table"),
+                new Label("Mable"),
+                new Label("Cable"));
+        LabelRepository labelRepository = mock(LabelRepository.class);
+        LabelService labelService_underTest = new LabelService(labelRepository);
+
         // when
-        labelService.getAll();
+        when(labelRepository.getAll()).thenReturn(labels);
         // then
-        verify(labelRepository).getAll();
+        assertEquals(labels,labelService_underTest.getAll());
     }
 
     @Test
@@ -69,14 +62,29 @@ class LabelServiceTest {
     }
 
     @Test
-    @Disabled
-    void getById() {
+    void canGetById() {
+        Label label = new Label("Table").setId(1);
+        LabelRepository labelRepository = mock(LabelRepository.class);
+        LabelService labelService_underTest = new LabelService(labelRepository);
+
+        // when
+        when(labelRepository.getById(1)).thenReturn(label);
+
+        //then
+        assertEquals(label,labelService_underTest.getById(1));
 
     }
 
     @Test
-    @Disabled
-    void updateById() {
+    void canUpdateById() {
+        Label label = new Label("Table").setId(1);
+        LabelRepository labelRepository = mock(LabelRepository.class);
+        LabelService labelService_underTest = new LabelService(labelRepository);
 
+        // when
+        when(labelRepository.update(label)).thenReturn(label);
+
+        //then
+        assertEquals(label,labelService_underTest.updateById(label));
     }
 }

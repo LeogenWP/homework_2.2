@@ -3,44 +3,42 @@ package org.leogenwp.controller;
 import org.leogenwp.model.Label;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.io.JavaIOLabelRepository;
+import org.leogenwp.service.LabelService;
 
 import java.util.List;
 
 public class LabelController {
-    private final LabelRepository labelRepository;
+    //private final LabelRepository labelRepository;
+    private final LabelService labelService = new LabelService(new JavaIOLabelRepository());
 
     public Label save (String labelName) {
-        return labelRepository.save(new Label(labelName));
+        return labelService.save(new Label(labelName));
     }
     public List<Label> getAll(){
-        for (Label label : labelRepository.getAll()) {
+        for (Label label : labelService.getAll()) {
             System.out.println("Label id: " + label.getId() + " Label name: " + label.getName());
         }
-        return labelRepository.getAll();
+        return labelService.getAll();
     }
 
     public void deleteById(Integer id) {
-        labelRepository.deleteById(id);
+        labelService.deleteById(id);
     }
 
     public Label getById(Integer id) {
-
         try {
-            Label label = labelRepository.getById(id);
+            Label label = labelService.getById(id);
             System.out.println("Label id: " + label.getId() + " Label name: " + label.getName());
         } catch (NullPointerException e) {
             System.out.println("Label not found");
         }
-        return labelRepository.getById(id);
+        return labelService.getById(id);
     }
 
     public Label updateById(Integer id, String labelName) {
-        Label label = labelRepository.getById(id);
+        Label label = labelService.getById(id);
         label.setName(labelName);
-        return labelRepository.update(label);
+        return labelService.updateById(label);
     }
 
-    public LabelController() {
-        this.labelRepository = new JavaIOLabelRepository();
-    }
 }

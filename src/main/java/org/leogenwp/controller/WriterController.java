@@ -4,14 +4,16 @@ import org.leogenwp.repository.WriterRepository;
 import org.leogenwp.repository.io.JavaIOPostRepository;
 import org.leogenwp.repository.io.JavaIOWriterRepository;
 import org.leogenwp.model.Writer;
+import org.leogenwp.service.PostService;
+import org.leogenwp.service.WriterService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
 public class WriterController {
-    private final WriterRepository writerRepository;
-    private final JavaIOPostRepository postRepository;
+    private final WriterService writerService = new WriterService(new JavaIOWriterRepository());
+    private final PostService postService = new PostService(new JavaIOPostRepository());
     private final String updateText = "Next options are available for Writer: \n"
             + "type firsname for updating firs name\n"
             + "type lastname for updating last name\n"
@@ -21,38 +23,36 @@ public class WriterController {
             + "type save for saving changes";
 
     public WriterController() {
-        writerRepository = new JavaIOWriterRepository();
-        postRepository = new JavaIOPostRepository();
     }
 
     public Writer save (String firstName, String lastName) {
-        return writerRepository.save(new Writer(firstName, lastName));
+        return writerService.save(new Writer(firstName, lastName));
     }
 
     public List<Writer> getAll() {
-        for (Writer writer : writerRepository.getAll()) {
+        for (Writer writer : writerService.getAll()) {
             System.out.println(writer.getId() + ";" + writer.getFirstName() +
                     ";" + writer.getLastName() + ";" +
                     writer.getPosts().toString());
         }
-        return writerRepository.getAll();
+        return writerService.getAll();
     }
 
     public void deleteById( Integer id) {
-        writerRepository.deleteById(id);
+        writerService.deleteById(id);
 
     }
 
     public Writer getById(Integer id) {
         try {
-            Writer writer = writerRepository.getById(id);
+            Writer writer = writerService.getById(id);
             System.out.println(writer.getId() + ";" + writer.getFirstName() +
                     ";" + writer.getLastName() + ";" +
                    writer.getPosts().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return writerRepository.getById(id);
+        return writerService.getById(id);
     }
 
     public Writer updateById(BufferedReader reader) {
@@ -62,7 +62,7 @@ public class WriterController {
 
         try {
             postId = reader.readLine();
-            Writer writer = writerRepository.getById(Integer.parseInt(postId));
+            Writer writer = writerService.getById(Integer.parseInt(postId));
             while (true) {
                 string = reader.readLine();
                 if (string.equals("return")) {
@@ -78,9 +78,9 @@ public class WriterController {
                     writer.removePost(Integer.parseInt(reader.readLine()));
                 } else if (string.equals("addpost")) {
                     System.out.println("write post id that you want to add");
-                    writer.addPost(postRepository.getById(Integer.parseInt(reader.readLine())));
+                    writer.addPost(postService.getById(Integer.parseInt(reader.readLine())));
                 } else if (string.equals("save")) {
-                    return writerRepository.update(writer);
+                    return writerService.updateById(writer);
                 }
             }
         } catch (IOException e) {

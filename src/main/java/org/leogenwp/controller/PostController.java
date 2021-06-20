@@ -5,6 +5,8 @@ import org.leogenwp.model.PostStatus;
 import org.leogenwp.repository.PostRepository;
 import org.leogenwp.repository.io.JavaIOLabelRepository;
 import org.leogenwp.repository.io.JavaIOPostRepository;
+import org.leogenwp.service.LabelService;
+import org.leogenwp.service.PostService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,8 +16,8 @@ import java.util.Date;
 import java.util.List;
 
 public class PostController {
-    private final PostRepository postRepository;
-    private final JavaIOLabelRepository labelRepository;
+    private final PostService postService = new PostService(new JavaIOPostRepository());
+    private final LabelService labelService = new LabelService(new JavaIOLabelRepository());
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final String updateText = "Next options are available for Post: \n"
             + "type content for updating content\n"
@@ -26,18 +28,17 @@ public class PostController {
             + "type save for saving changes\n";
 
     public PostController(){
-        postRepository = new JavaIOPostRepository();
-        labelRepository = new JavaIOLabelRepository();
+
     }
 
     public Post save (String postContent) {
-        return postRepository.save(new Post(postContent));
+        return postService.save(new Post(postContent));
     }
 
     public List<Post> getAll() {
         List<Post> posts = new ArrayList<>();
         try {
-            posts = postRepository.getAll();
+            posts = postService.getAll();
             for (Post post : posts) {
                 System.out.println(post.getId() + ";" + post.getContent() +
                         ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
@@ -52,20 +53,20 @@ public class PostController {
     }
 
     public void deleteById( Integer id) {
-        postRepository.deleteById(id);
+        postService.deleteById(id);
 
     }
 
     public Post getById(Integer id) {
         try {
-            Post post = postRepository.getById(id);
+            Post post = postService.getById(id);
             System.out.println(post.getId() + ";" + post.getContent() +
                     ";" + post.getCreated() + ";" + post.getUpdated() + ";" +
                     post.getLabels().toString() + ";" + post.getPostStatus() );
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  postRepository.getById(id);
+        return  postService.getById(id);
     }
 
     public Post updateById(BufferedReader reader) {
@@ -75,7 +76,7 @@ public class PostController {
         String postId;
         try {
             postId = reader.readLine();
-            Post post = postRepository.getById(Integer.parseInt(postId));
+            Post post = postService.getById(Integer.parseInt(postId));
             while (true) {
                 string = reader.readLine();
                 if (string.equals("return")) {
@@ -85,7 +86,7 @@ public class PostController {
                     post.setContent(reader.readLine());
                 } else if (string.equals("addlabels")) {
                     System.out.println("add label id that you want to add");
-                    post.addLabel(labelRepository.getById(Integer.parseInt(reader.readLine())));
+                    post.addLabel(labelService.getById(Integer.parseInt(reader.readLine())));
                 } else if (string.equals("removelabels")) {
                     System.out.println("add label id that you want to remove");
                     post.removeLabel(Integer.parseInt(reader.readLine()));
@@ -102,7 +103,7 @@ public class PostController {
                 } else if (string.equals("save")) {
                     Date now = new Date();
                     post.setUpdated(sdfDate.format(now));
-                    return  postRepository.update(post);
+                    return  postService.updateById(post);
                 }
             }
         } catch (IOException e) {

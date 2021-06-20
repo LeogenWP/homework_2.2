@@ -12,7 +12,7 @@ import java.util.List;
 public class WriterService {
     private final WriterRepository writerRepository;
 
-    public WriterService(WriterRepository writerRepository, JavaIOPostRepository postRepository) {
+    public WriterService(WriterRepository writerRepository) {
         this.writerRepository = writerRepository;
     }
 
