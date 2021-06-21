@@ -3,6 +3,7 @@ package org.leogenwp.CollectionUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+//import resources.application.properties;
 
 public class ConnectDB {
     private  String url = "jdbc:mysql://localhost:3306/writer?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC";
@@ -11,7 +12,6 @@ public class ConnectDB {
     private static ConnectDB instance;
     private Connection connection;
 
-    //jdbc:mysql://localhost:3306/writer
     private ConnectDB()
     {
         try {

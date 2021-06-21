@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.leogenwp.controller.LabelController;
 import org.leogenwp.repository.LabelRepository;
 import org.leogenwp.repository.io.JavaIOLabelRepository;
 import org.mockito.ArgumentCaptor;
@@ -56,8 +57,13 @@ class LabelServiceTest {
     }
 
     @Test
-    @Disabled
     void deleteById() {
+        // given
+        LabelService labelService_underTest = mock(LabelService.class);
+        // when
+        labelService_underTest.deleteById(1);
+        // then
+        verify(labelService_underTest).deleteById(1);
 
     }
 

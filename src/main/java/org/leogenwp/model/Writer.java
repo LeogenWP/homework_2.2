@@ -40,11 +40,6 @@ public class Writer {
         return posts;
     }
 
-    public Writer setPosts(List<Post> posts) {
-        this.posts = posts;
-        return this;
-    }
-
     public Writer(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -53,12 +48,6 @@ public class Writer {
 
     public Writer() {
         this.posts = new ArrayList<>();
-    }
-
-    public Writer(Integer id,String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
     public void addPost(Post post){

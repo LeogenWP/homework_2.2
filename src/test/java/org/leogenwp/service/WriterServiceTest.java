@@ -12,8 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class WriterServiceTest {
 
@@ -49,8 +48,13 @@ class WriterServiceTest {
     }
 
     @Test
-    @Disabled
     void canDeleteWriterById() {
+        // given
+        WriterService writerService_underTest = mock(WriterService.class);
+        // when
+        writerService_underTest.deleteById(1);
+        // then
+        verify(writerService_underTest).deleteById(1);
     }
 
     @Test

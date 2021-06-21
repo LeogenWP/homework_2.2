@@ -22,12 +22,6 @@ public class Label {
         return this;
     }
 
-    public Label setName(Integer id,String name) {
-        this.id = id;
-        this.name = name;
-        return this;
-    }
-
     public Label(String name) {
         this.name = name;
     }

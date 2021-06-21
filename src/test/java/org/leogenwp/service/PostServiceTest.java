@@ -12,8 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class PostServiceTest {
 
@@ -50,8 +49,13 @@ class PostServiceTest {
     }
 
     @Test
-    @Disabled
     void canDeletePostById() {
+        // given
+        PostService postService_underTest = mock(PostService.class);
+        // when
+        postService_underTest.deleteById(1);
+        // then
+        verify(postService_underTest).deleteById(1);
     }
 
     @Test

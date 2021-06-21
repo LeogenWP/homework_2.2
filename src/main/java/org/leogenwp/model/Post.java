@@ -51,19 +51,6 @@ public class Post {
         return labels;
     }
 
-    public Post setLabels(List<Label> labels) {
-        this.labels = labels;
-        return this;
-    }
-
-    public Post(Integer id, String content, String created, String updated, List<Label> labels, PostStatus postStatus) {
-        this.id = id;
-        this.content = content;
-        this.created = created;
-        this.updated = updated;
-        this.labels = labels;
-        this.postStatus = postStatus;
-    }
 
     public Post() {
         this.labels = new ArrayList<>();
