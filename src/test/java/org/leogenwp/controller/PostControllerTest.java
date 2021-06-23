@@ -1,5 +1,6 @@
 package org.leogenwp.controller;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.leogenwp.model.Post;
 
@@ -16,61 +17,50 @@ import static org.mockito.Mockito.verify;
 class PostControllerTest {
 
     @Test
-    void save() {
-        // give
+    void savePost_Success() {
         PostController postController_underTest = mock(PostController.class);
         Post post = new Post().setContent("Tom");
-        // when
         when(postController_underTest.save("Tom")).thenReturn(post);
-
-        //then
         assertEquals(post,postController_underTest.save("Tom"));
 
     }
 
     @Test
-    void getAll() {
-        // give
+    void getAllPosts_Success() {
         PostController postController_underTest = mock(PostController.class);
-        List<Post> posts = Arrays.asList(
-                new Post(),
-                new Post()
-        );
-        // when
+        List<Post> posts = getPostList();
         when(postController_underTest.getAll()).thenReturn(posts);
-
-        //then
         assertEquals(posts,postController_underTest.getAll());
     }
 
     @Test
-    void deleteById() {
-        // given
+    void deletePostById_Success() {
         PostController postController_underTest = mock(PostController.class);
-        // when
         postController_underTest.deleteById(1);
-        // then
         verify(postController_underTest).deleteById(1);
     }
 
     @Test
-    void getById() {
-        // give
+    void getPostById_Success() {
         PostController postController_underTest = mock(PostController.class);
         Post post = new Post().setId(1);
-        // when
         when(postController_underTest.getById(1)).thenReturn(post);
-        //then
         assertEquals(post,postController_underTest.getById(1));
     }
 
     @Test
-    void updateById() {
-        // give
+    @Disabled
+    void updatePostById() {
         PostController postController_underTest = mock(PostController.class);
-        // when
         postController_underTest.updateById( new BufferedReader(new InputStreamReader(System.in)));
-        //then
         verify(postController_underTest).updateById(new BufferedReader(new InputStreamReader(System.in)));
+    }
+
+    private List<Post> getPostList() {
+        List<Post> posts = Arrays.asList(
+                new Post(),
+                new Post()
+        );
+        return posts;
     }
 }

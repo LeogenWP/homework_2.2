@@ -27,72 +27,55 @@ import static org.mockito.Mockito.*;
 class LabelServiceTest {
 
     @Test
-    void CanSaveLabel() {
-        // given
+    void saveLabel_Success() {
         Label label = new Label("Table");
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
-
-        // when
         when(labelRepository.save(label)).thenReturn(label);
-
-        //then
         assertEquals(label,labelService_underTest.save(label));
     }
 
     @Test
-    void canGetAllLabels() {
-        // given
-        List<Label> labels = Arrays.asList(
-                new Label("Table"),
-                new Label("Mable"),
-                new Label("Cable"));
+    void getAllLabels_Success() {
+        List<Label> labels = getLabelList();
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
-
-        // when
         when(labelRepository.getAll()).thenReturn(labels);
-        // then
         assertEquals(labels,labelService_underTest.getAll());
     }
 
     @Test
-    void deleteById() {
-        // given
+    void deleteById_Success() {
         LabelService labelService_underTest = mock(LabelService.class);
-        // when
         labelService_underTest.deleteById(1);
-        // then
         verify(labelService_underTest).deleteById(1);
 
     }
 
     @Test
-    void canGetLabelById() {
-        // given
+    void getLabelById_Success() {
         Label label = new Label("Table").setId(1);
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
-
-        // when
         when(labelRepository.getById(1)).thenReturn(label);
-
-        //then
         assertEquals(label,labelService_underTest.getById(1));
 
     }
 
     @Test
-    void canUpdateLabel() {
-        // given
+    void updateLabel_Success() {
         Label label = new Label("Table").setId(1);
         LabelRepository labelRepository = mock(LabelRepository.class);
         LabelService labelService_underTest = new LabelService(labelRepository);
-
-        // when
         when(labelRepository.update(label)).thenReturn(label);
-
-        //then
         assertEquals(label,labelService_underTest.update(label));
+    }
+
+    private List<Label> getLabelList() {
+        List<Label> labels = Arrays.asList(
+                new Label("Table"),
+                new Label("Mable"),
+                new Label("Cable"));
+        return labels;
     }
 }

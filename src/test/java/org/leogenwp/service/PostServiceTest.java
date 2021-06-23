@@ -17,72 +17,53 @@ import static org.mockito.Mockito.*;
 class PostServiceTest {
 
     @Test
-    void canSavePost() {
-        // given
+    void savePost_Success() {
         Post post = new Post("Content");
         PostRepository postRepository = mock(PostRepository.class);
         PostService postService_underTest = new PostService(postRepository);
-
-        // when
         when(postRepository.save(post)).thenReturn(post);
-
-        //then
         assertEquals(post,postService_underTest.save(post));
     }
 
     @Test
-    void canGetAllPosts() {
-        // given
-        List<Post> posts = Arrays.asList(
-                new Post("Content1"),
-                new Post("Content2"),
-                new Post("Content3"));
-
+    void getAllPosts_Success() {
+        List<Post> posts = getPostList();
         PostRepository postRepository = mock(PostRepository.class);
         PostService postService_underTest = new PostService(postRepository);
-
-        // when
         when(postRepository.getAll()).thenReturn(posts);
-
-        //then
         assertEquals(posts,postService_underTest.getAll());
     }
 
     @Test
-    void canDeletePostById() {
-        // given
+    void deletePostById_Success() {
         PostService postService_underTest = mock(PostService.class);
-        // when
         postService_underTest.deleteById(1);
-        // then
         verify(postService_underTest).deleteById(1);
     }
 
     @Test
-    void CanGetPost() {
-        // given
+    void getPost_Success() {
         Post post = new Post("Content").setId(1);
         PostRepository postRepository = mock(PostRepository.class);
         PostService postService_underTest = new PostService(postRepository);
-
-        // when
         when(postRepository.getById(1)).thenReturn(post);
-
-        //then
         assertEquals(post,postService_underTest.getById(1));
     }
 
     @Test
-    void canUpdatePost() {
-        // given
+    void updatePost_Success() {
         Post post = new Post("Content").setId(1);
         PostRepository postRepository = mock(PostRepository.class);
         PostService postService_underTest = new PostService(postRepository);
-
-        // when
         when(postRepository.update(post)).thenReturn(post);
-
-        //then
         assertEquals(post,postService_underTest.update(post));
+    }
+
+    private List<Post> getPostList() {
+        List<Post> posts = Arrays.asList(
+                new Post("Content1"),
+                new Post("Content2"),
+                new Post("Content3"));
+        return posts;
     }
 }

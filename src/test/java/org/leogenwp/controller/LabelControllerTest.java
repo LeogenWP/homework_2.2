@@ -16,59 +16,47 @@ import static org.mockito.Mockito.*;
 class LabelControllerTest {
 
     @Test
-    void CanSaveLabel() {
-        // given
+    void saveLabel_Success() {
         LabelController labelController_underTest = new LabelController();
-        //then
         assertEquals(Label.class,labelController_underTest.save("Table").getClass());
     }
 
     @Test
-    void getAll() {
-        // given
+    void getAllLabels_Success() {
         LabelController labelController_underTest = mock(LabelController.class);
-        List<Label> labels = Arrays.asList(
-                new Label("Bom"),
-                new Label("Tom")
-        );
-        // when
+        List<Label> labels = getLabelList();
         when(labelController_underTest.getAll()).thenReturn(labels);
-
-        //then
         assertEquals(labels,labelController_underTest.getAll());
     }
 
     @Test
-    void deleteById() {
-        // given
+    void deleteLabelById_Success() {
         LabelController labelController_underTest = mock(LabelController.class);
-        // when
         labelController_underTest.deleteById(1);
-        // then
         verify(labelController_underTest).deleteById(1);
     }
 
     @Test
-    void getById() {
-        // given
+    void getLabelById_Success() {
         LabelController labelController_underTest = mock(LabelController.class);
         Label label = new Label(1,"Bom");
-        // when
         when(labelController_underTest.getById(1)).thenReturn(label);
-
-        //then
         assertEquals(label,labelController_underTest.getById(1));
     }
 
     @Test
-    void updateById() {
-        // given
+    void updateLabelById_Success() {
         LabelController labelController_underTest = mock(LabelController.class);
         Label label = new Label(1,"Bom");
-        // when
         when(labelController_underTest.updateById(1,"Bom")).thenReturn(label);
-
-        //then
         assertEquals(label,labelController_underTest.updateById(1,"Bom"));
+    }
+
+    private List<Label> getLabelList() {
+        List<Label> labels = Arrays.asList(
+                new Label("Bom"),
+                new Label("Tom")
+        );
+        return labels;
     }
 }
